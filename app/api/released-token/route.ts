@@ -11,7 +11,7 @@ const currentUser = {
 export async function POST() {
   try {
     const tokenResponse = await fetch(
-      "https://accounts.producthub.dev/auth/api/impersonation/token",
+      "https://accounts.releasedhub.com/auth/api/impersonation/token",
       {
         method: "POST",
         headers: {

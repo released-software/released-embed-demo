@@ -59,19 +59,21 @@ export default function Home() {
 
   return (
     <div style={styles.container}>
-      <nav style={styles.nav}>
+      <nav className="nav-container" style={styles.nav}>
         <a href="https://released.so" target="_blank" rel="noopener noreferrer">
           <img
             src="/released-logo.svg"
             alt="Released"
+            className="nav-logo"
             style={styles.logo}
           />
         </a>
-        <div style={styles.navLinks}>
+        <div className="nav-links" style={styles.navLinks}>
           <a
             href="https://docs.released.so/guide/getting-started/setup-guide"
             target="_blank"
             rel="noopener noreferrer"
+            className="doc-link"
             style={styles.docLink}
           >
             Documentation
@@ -80,6 +82,7 @@ export default function Home() {
             href="https://github.com/released-software/released-embed-demo"
             target="_blank"
             rel="noopener noreferrer"
+            className="github-button"
             style={styles.githubButton}
           >
             <svg
@@ -96,12 +99,12 @@ export default function Home() {
         </div>
       </nav>
 
-      <header style={styles.hero}>
+      <header className="hero-section" style={styles.hero}>
         <p style={styles.greeting}>Welcome back, {currentUser.name}</p>
         <h1 style={styles.headline}>
           Embed <span style={styles.gradientText}>Demo</span>
         </h1>
-        <p style={styles.subtitle}>
+        <p className="hero-subtitle" style={styles.subtitle}>
 This site shows how to embed a Released portal and implement your own user verification, enabling users to access it without needing to log in.
         </p>
       </header>

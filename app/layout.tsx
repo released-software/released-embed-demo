@@ -33,6 +33,37 @@ export default function RootLayout({
           @keyframes spin {
             to { transform: rotate(360deg); }
           }
+          @media (max-width: 768px) {
+            .nav-container {
+              flex-direction: column;
+              gap: 16px;
+              padding: 16px !important;
+            }
+            .nav-logo {
+              height: 50px !important;
+            }
+            .nav-links {
+              width: 100%;
+              justify-content: center;
+              gap: 12px !important;
+            }
+            .github-button {
+              padding: 8px 12px !important;
+              font-size: 13px !important;
+            }
+            .github-button svg {
+              display: none;
+            }
+            .doc-link {
+              font-size: 13px !important;
+            }
+            .hero-section {
+              padding: 40px 16px 60px !important;
+            }
+            .hero-subtitle {
+              font-size: 16px !important;
+            }
+          }
         `}</style>
       </head>
       <body>
