@@ -74,11 +74,13 @@ export default function Home() {
   return (
     <div style={styles.container}>
       <nav style={styles.nav}>
-        <img
-          src="/released-logo.svg"
-          alt="Released"
-          style={styles.logo}
-        />
+        <a href="https://released.so" target="_blank" rel="noopener noreferrer">
+          <img
+            src="/released-logo.svg"
+            alt="Released"
+            style={styles.logo}
+          />
+        </a>
         <div style={styles.navLinks}>
           <a
             href="https://docs.released.so/guide/getting-started/setup-guide"
