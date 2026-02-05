@@ -38,6 +38,21 @@ export default function Home() {
     fetchToken();
   }, []);
 
+  // Keep the page title fixed (prevent embed from changing it)
+  useEffect(() => {
+    document.title = "Released Embed Example";
+    const observer = new MutationObserver(() => {
+      if (document.title !== "Released Embed Example") {
+        document.title = "Released Embed Example";
+      }
+    });
+    const titleElement = document.querySelector("title");
+    if (titleElement) {
+      observer.observe(titleElement, { childList: true });
+    }
+    return () => observer.disconnect();
+  }, []);
+
   if (loading) {
     return (
       <div style={styles.loadingContainer}>
