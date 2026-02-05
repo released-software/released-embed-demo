@@ -67,7 +67,7 @@ A Next.js app demonstrating how to embed a [Released](https://released.so) porta
 
 ### Domain Whitelist
 
-After deploying, add your Vercel domain to the allowed origins in your Released embed settings to prevent `invalid_origin` errors.
+After deploying, add your Vercel domain to the allowed origins in your Released embed settings to prevent `invalid_origin` errors. See the [Trusted Domains documentation](https://docs.released.so/guide/product/administration/trusted-domains) for detailed instructions.
 
 ## Project Structure
 
