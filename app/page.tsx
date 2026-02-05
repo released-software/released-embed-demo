@@ -38,20 +38,6 @@ export default function Home() {
     fetchToken();
   }, []);
 
-  // Keep the page title fixed (prevent embed from changing it)
-  useEffect(() => {
-    document.title = "Released Embed Example";
-    const observer = new MutationObserver(() => {
-      if (document.title !== "Released Embed Example") {
-        document.title = "Released Embed Example";
-      }
-    });
-    const titleElement = document.querySelector("title");
-    if (titleElement) {
-      observer.observe(titleElement, { childList: true });
-    }
-    return () => observer.disconnect();
-  }, []);
 
   if (loading) {
     return (
@@ -157,6 +143,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     fontSize: "14px",
     fontWeight: "500",
     textDecoration: "none",
+    cursor: "pointer",
   },
   githubButton: {
     display: "flex",
@@ -169,6 +156,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     fontWeight: "500",
     textDecoration: "none",
     transition: "background-color 0.2s",
+    cursor: "pointer",
   },
   logo: {
     height: "80px",
