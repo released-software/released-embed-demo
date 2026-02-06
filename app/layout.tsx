@@ -15,7 +15,7 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <Script
-          src="https://embed-staging.released.so/1/embed.js"
+          src="https://embed.released.so/1/embed.js"
           strategy="beforeInteractive"
         />
         <style>{`
