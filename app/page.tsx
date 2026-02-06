@@ -38,6 +38,57 @@ export default function Home() {
     fetchToken();
   }, []);
 
+  // Debug: Monitor for errors and performance issues
+  useEffect(() => {
+    // Global error handler
+    const errorHandler = (event: ErrorEvent) => {
+      console.error("[DEBUG] Global error:", {
+        message: event.message,
+        filename: event.filename,
+        lineno: event.lineno,
+        colno: event.colno,
+        error: event.error,
+      });
+    };
+
+    // Unhandled promise rejection handler
+    const rejectionHandler = (event: PromiseRejectionEvent) => {
+      console.error("[DEBUG] Unhandled rejection:", event.reason);
+    };
+
+    // Listen for messages from the embed iframe
+    const messageHandler = (event: MessageEvent) => {
+      if (event.data && typeof event.data === "object") {
+        console.log("[DEBUG] PostMessage received:", event.data);
+      }
+    };
+
+    // Memory monitoring (if available)
+    const memoryInterval = setInterval(() => {
+      if ((performance as any).memory) {
+        const memory = (performance as any).memory;
+        console.log("[DEBUG] Memory:", {
+          usedJSHeapSize: `${Math.round(memory.usedJSHeapSize / 1048576)}MB`,
+          totalJSHeapSize: `${Math.round(memory.totalJSHeapSize / 1048576)}MB`,
+          jsHeapSizeLimit: `${Math.round(memory.jsHeapSizeLimit / 1048576)}MB`,
+        });
+      }
+    }, 2000);
+
+    window.addEventListener("error", errorHandler);
+    window.addEventListener("unhandledrejection", rejectionHandler);
+    window.addEventListener("message", messageHandler);
+
+    console.log("[DEBUG] Debugging enabled - monitoring for errors");
+
+    return () => {
+      window.removeEventListener("error", errorHandler);
+      window.removeEventListener("unhandledrejection", rejectionHandler);
+      window.removeEventListener("message", messageHandler);
+      clearInterval(memoryInterval);
+    };
+  }, []);
+
 
   if (loading) {
     return (
