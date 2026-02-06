@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Released Embed Example",
@@ -18,53 +19,6 @@ export default function RootLayout({
           src="https://embed.released.so/1/embed.js"
           strategy="beforeInteractive"
         />
-        <style>{`
-          * {
-            box-sizing: border-box;
-          }
-          body {
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background-color: #000000;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-          }
-          @keyframes spin {
-            to { transform: rotate(360deg); }
-          }
-          @media (max-width: 768px) {
-            .nav-container {
-              flex-direction: column;
-              gap: 16px;
-              padding: 16px !important;
-            }
-            .nav-logo {
-              height: 50px !important;
-            }
-            .nav-links {
-              width: 100%;
-              justify-content: center;
-              gap: 12px !important;
-            }
-            .github-button {
-              padding: 8px 12px !important;
-              font-size: 13px !important;
-            }
-            .github-button svg {
-              display: none;
-            }
-            .doc-link {
-              font-size: 13px !important;
-            }
-            .hero-section {
-              padding: 40px 16px 60px !important;
-            }
-            .hero-subtitle {
-              font-size: 16px !important;
-            }
-          }
-        `}</style>
       </head>
       <body>
         {children}
