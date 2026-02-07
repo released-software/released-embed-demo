@@ -12,6 +12,7 @@ export default function Home() {
   const [token, setToken] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
 
   useEffect(() => {
     async function fetchToken() {
@@ -38,17 +39,23 @@ export default function Home() {
     fetchToken();
   }, []);
 
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
+  };
+
+  const colors = theme === "dark" ? darkColors : lightColors;
+
   if (loading) {
     return (
-      <div style={styles.loadingContainer}>
-        <div style={styles.spinner} />
+      <div style={{ ...styles.loadingContainer, backgroundColor: colors.bg }}>
+        <div style={{ ...styles.spinner, borderColor: colors.spinnerBg, borderTopColor: colors.spinnerFg }} />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div style={styles.errorContainer}>
+      <div style={{ ...styles.errorContainer, backgroundColor: colors.bg }}>
         <p style={styles.errorText}>Error: {error}</p>
       </div>
     );
@@ -57,11 +64,11 @@ export default function Home() {
   const channelId = process.env.NEXT_PUBLIC_RELEASED_CHANNEL_ID;
 
   return (
-    <div style={styles.container}>
+    <div style={{ ...styles.container, backgroundColor: colors.bg }}>
       <nav className="nav-container" style={styles.nav}>
         <a href="https://released.so" target="_blank" rel="noopener noreferrer">
           <img
-            src="/released-logo.svg"
+            src={theme === "dark" ? "/released-logo.svg" : "/released-logo-dark.svg"}
             alt="Released"
             className="nav-logo"
             style={styles.logo}
@@ -73,7 +80,7 @@ export default function Home() {
             target="_blank"
             rel="noopener noreferrer"
             className="doc-link"
-            style={styles.docLink}
+            style={{ ...styles.docLink, color: colors.mutedText }}
           >
             Documentation
           </a>
@@ -82,7 +89,7 @@ export default function Home() {
             target="_blank"
             rel="noopener noreferrer"
             className="github-button"
-            style={styles.githubButton}
+            style={{ ...styles.githubButton, backgroundColor: colors.buttonBg, color: colors.buttonText }}
           >
             <svg
               height="20"
@@ -95,16 +102,32 @@ export default function Home() {
             </svg>
             View on GitHub
           </a>
+          <button
+            onClick={toggleTheme}
+            style={{ ...styles.themeToggle, backgroundColor: colors.toggleBg, color: colors.toggleText }}
+            aria-label="Toggle theme"
+          >
+            {theme === "dark" ? (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="5" />
+                <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+              </svg>
+            ) : (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+              </svg>
+            )}
+          </button>
         </div>
       </nav>
 
       <header className="hero-section" style={styles.hero}>
-        <p style={styles.greeting}>Welcome back, {currentUser.name}</p>
-        <h1 style={styles.headline}>
+        <p style={{ ...styles.greeting, color: colors.mutedText }}>Welcome back, {currentUser.name}</p>
+        <h1 style={{ ...styles.headline, color: colors.text }}>
           Embed <span style={styles.gradientText}>Demo</span>
         </h1>
-        <p className="hero-subtitle" style={styles.subtitle}>
-This site shows how to embed a Released portal and implement your own user verification, enabling users to access it without needing to log in.
+        <p className="hero-subtitle" style={{ ...styles.subtitle, color: colors.mutedText }}>
+          You're viewing this as John Doe—a demo user automatically authenticated via server-side token. No login required.
         </p>
       </header>
 
@@ -113,7 +136,7 @@ This site shows how to embed a Released portal and implement your own user verif
           <released-page 
             channel-id={channelId} 
             auth-token={token} 
-            color-scheme="dark"
+            color-scheme={theme}
             style={{ width: "100%", minHeight: "800px" }}
           ></released-page>
         )}
@@ -122,10 +145,34 @@ This site shows how to embed a Released portal and implement your own user verif
   );
 }
 
+const darkColors = {
+  bg: "#000000",
+  text: "#ffffff",
+  mutedText: "#888888",
+  buttonBg: "#ffffff",
+  buttonText: "#000000",
+  toggleBg: "#333333",
+  toggleText: "#ffffff",
+  spinnerBg: "#333333",
+  spinnerFg: "#ffffff",
+};
+
+const lightColors = {
+  bg: "#ffffff",
+  text: "#000000",
+  mutedText: "#666666",
+  buttonBg: "#000000",
+  buttonText: "#ffffff",
+  toggleBg: "#e5e5e5",
+  toggleText: "#000000",
+  spinnerBg: "#e5e5e5",
+  spinnerFg: "#000000",
+};
+
 const styles: { [key: string]: React.CSSProperties } = {
   container: {
     minHeight: "100vh",
-    backgroundColor: "#000000",
+    transition: "background-color 0.3s ease",
   },
   nav: {
     maxWidth: "1200px",
@@ -147,17 +194,26 @@ const styles: { [key: string]: React.CSSProperties } = {
     textDecoration: "none",
     cursor: "pointer",
   },
+  themeToggle: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "40px",
+    height: "40px",
+    borderRadius: "8px",
+    border: "none",
+    cursor: "pointer",
+    transition: "background-color 0.2s",
+  },
   githubButton: {
     display: "flex",
     alignItems: "center",
     padding: "10px 16px",
-    backgroundColor: "#ffffff",
-    color: "#000000",
     borderRadius: "8px",
     fontSize: "14px",
     fontWeight: "500",
     textDecoration: "none",
-    transition: "background-color 0.2s",
+    transition: "background-color 0.2s, color 0.2s",
     cursor: "pointer",
   },
   logo: {
