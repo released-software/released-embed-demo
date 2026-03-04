@@ -32,9 +32,11 @@ body {
     gap: 12px !important;
   }
   
-  .github-button {
+  .github-button,
+  .feedback-button {
     padding: 8px 12px !important;
     font-size: 13px !important;
+    height: 36px !important;
   }
   
   .github-button svg {

@@ -2,7 +2,7 @@
 
 A Next.js app demonstrating how to embed a [Released](https://released.so) portal with server-side user authentication. This allows your users to access the roadmap without needing to log in separately.
 
-**Live Demo:** [https://released-embed-demo.vercel.app](https://released-embed-demo.vercel.app)
+**Live Demo:** [https://embed-demo.released.so](https://embed-demo.released.so)
 
 ## Features
 
@@ -116,11 +116,46 @@ After deploying, add your Vercel domain to the allowed origins in your Released 
 The embed supports dark mode via the `color-scheme` attribute:
 
 ```html
-<released-page 
-  channel-id="your-channel-id" 
+<released-page
+  channel-id="your-channel-id"
   auth-token="token"
   color-scheme="dark"
 ></released-page>
+```
+
+### Feedback Form
+
+You can embed a feedback form that users can trigger programmatically:
+
+1. Add the form element to your page:
+
+```html
+<released-form
+  form-id="your-form-id"
+  auth-token="token"
+></released-form>
+```
+
+2. Open the form programmatically using the Released API:
+
+```javascript
+// Open the feedback form
+window.Released.show('form', 'your-form-id');
+
+// Close the feedback form
+window.Released.close('form', 'your-form-id');
+```
+
+Example with a button:
+
+```jsx
+const openFeedback = () => {
+  window.Released?.show('form', 'your-form-id');
+};
+
+<button onClick={openFeedback}>
+  Feedback
+</button>
 ```
 
 ### User Information

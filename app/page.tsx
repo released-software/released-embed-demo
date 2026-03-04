@@ -13,6 +13,7 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const [header, setHeader] = useState<"false" | "true">("false");
 
   useEffect(() => {
     async function fetchToken() {
@@ -41,6 +42,10 @@ export default function Home() {
 
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
+  };
+
+  const openFeedback = () => {
+    window.Released?.show('form', 'b67de5f5-2ece-46ba-aa84-602ab58f40ea');
   };
 
   const colors = theme === "dark" ? darkColors : lightColors;
@@ -74,16 +79,7 @@ export default function Home() {
             style={styles.logo}
           />
         </a>
-        <div className="nav-links" style={styles.navLinks}>
-          <a
-            href="https://docs.released.so/guide/getting-started/setup-guide"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="doc-link"
-            style={{ ...styles.docLink, color: colors.mutedText }}
-          >
-            Documentation
-          </a>
+        <div className="nav-links" style={styles.navLinks}>          
           <a
             href="https://github.com/released-software/released-embed-demo"
             target="_blank"
@@ -102,6 +98,13 @@ export default function Home() {
             </svg>
             View on GitHub
           </a>
+          <button
+            onClick={openFeedback}
+            className="feedback-button"
+            style={{ ...styles.feedbackButton, backgroundColor: colors.toggleBg, color: colors.toggleText }}
+          >
+            Feedback
+          </button>
           <button
             onClick={toggleTheme}
             style={{ ...styles.themeToggle, backgroundColor: colors.toggleBg, color: colors.toggleText }}
@@ -124,22 +127,24 @@ export default function Home() {
       <header className="hero-section" style={styles.hero}>
         <p style={{ ...styles.greeting, color: colors.mutedText }}>Welcome back, {currentUser.name}</p>
         <h1 style={{ ...styles.headline, color: colors.text }}>
-          Embed <span style={styles.gradientText}>Demo</span>
+          Embed Demo
         </h1>
         <p className="hero-subtitle" style={{ ...styles.subtitle, color: colors.mutedText }}>
-          You're viewing this as John Doe—a demo user automatically authenticated via server-side token. No login required.
+          This demo shows how <a href="https://released.so" style={{ color: colors.text }}>Released</a> connects customer communication with Jira. The roadmap displays Jira issues in a shareable format, and the feedback button captures feedback directly into Jira.        
         </p>
       </header>
 
       <main style={styles.main}>
         {token && (
-          <released-page 
-            channel-id={channelId} 
-            auth-token={token} 
+          <released-page
+            channel-id={channelId}
+            auth-token={token}
+            header={header}
             color-scheme={theme}
             style={{ width: "100%", minHeight: "800px" }}
           ></released-page>
         )}
+        <released-form form-id="b67de5f5-2ece-46ba-aa84-602ab58f40ea" auth-token={token}></released-form>
       </main>
     </div>
   );
@@ -215,6 +220,18 @@ const styles: { [key: string]: React.CSSProperties } = {
     textDecoration: "none",
     transition: "background-color 0.2s, color 0.2s",
     cursor: "pointer",
+  },
+  feedbackButton: {
+    display: "flex",
+    alignItems: "center",
+    height: "40px",
+    padding: "0 16px",
+    borderRadius: "8px",
+    fontSize: "14px",
+    fontWeight: "500",
+    border: "none",
+    cursor: "pointer",
+    transition: "background-color 0.2s, color 0.2s",
   },
   logo: {
     height: "80px",
@@ -294,15 +311,29 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
 };
 
-// TypeScript declaration for the custom element
+// TypeScript declaration for the custom elements and Released API
 declare global {
+  interface Window {
+    Released?: {
+      show: (type: string, id: string) => void;
+      close: (type: string, id: string) => void;
+    };
+  }
   namespace JSX {
     interface IntrinsicElements {
       "released-page": React.DetailedHTMLProps<
         React.HTMLAttributes<HTMLElement> & {
           "channel-id"?: string;
           "auth-token"?: string;
+          "header"?: string;
           "color-scheme"?: string;
+        },
+        HTMLElement
+      >;
+      "released-form": React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement> & {
+          "form-id"?: string;
+          "auth-token"?: string;
         },
         HTMLElement
       >;
