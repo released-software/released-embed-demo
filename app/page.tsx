@@ -136,15 +136,17 @@ export default function Home() {
 
       <main style={styles.main}>
         {token && (
-          <released-page
-            channel-id={channelId}
-            auth-token={token}
-            header={header}
-            color-scheme={theme}
-            style={{ width: "100%", minHeight: "800px" }}
-          ></released-page>
+          <>
+            <released-page
+              channel-id={channelId}
+              auth-token={token}
+              header={header}
+              color-scheme={theme}
+              style={{ width: "100%", minHeight: "800px" }}
+            ></released-page>
+            <released-form form-id="b67de5f5-2ece-46ba-aa84-602ab58f40ea" auth-token={token}></released-form>
+          </>
         )}
-        <released-form form-id="b67de5f5-2ece-46ba-aa84-602ab58f40ea" auth-token={token}></released-form>
       </main>
     </div>
   );
