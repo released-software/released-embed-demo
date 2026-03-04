@@ -145,7 +145,7 @@ export default function Home() {
               modules="roadmap"
               style={{ width: "100%", minHeight: "800px" }}
             ></released-page>
-            <released-form form-id="b67de5f5-2ece-46ba-aa84-602ab58f40ea" auth-token={token}></released-form>
+            <released-form form-id="b67de5f5-2ece-46ba-aa84-602ab58f40ea" auth-token={token} sub-title="Embed this form in your website or app to collect feedback from customers or stakeholders."></released-form>
           </>
         )}
       </main>
@@ -338,6 +338,7 @@ declare global {
         React.HTMLAttributes<HTMLElement> & {
           "form-id"?: string;
           "auth-token"?: string;
+          "sub-title"?: string;
         },
         HTMLElement
       >;
