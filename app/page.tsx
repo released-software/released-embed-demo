@@ -80,12 +80,19 @@ export default function Home() {
           />
         </a>
         <div className="nav-links" style={styles.navLinks}>          
+          <button
+            onClick={openFeedback}
+            className="feedback-button"
+            style={{ ...styles.feedbackButton, backgroundColor: colors.buttonBg, color: colors.buttonText }}
+          >
+            Feedback
+          </button>
           <a
             href="https://github.com/released-software/released-embed-demo"
             target="_blank"
             rel="noopener noreferrer"
             className="github-button"
-            style={{ ...styles.githubButton, backgroundColor: colors.buttonBg, color: colors.buttonText }}
+            style={{ ...styles.githubButton, backgroundColor: colors.toggleBg, color: colors.toggleText }}
           >
             <svg
               height="20"
@@ -98,13 +105,6 @@ export default function Home() {
             </svg>
             View on GitHub
           </a>
-          <button
-            onClick={openFeedback}
-            className="feedback-button"
-            style={{ ...styles.feedbackButton, backgroundColor: colors.toggleBg, color: colors.toggleText }}
-          >
-            Feedback
-          </button>
           <button
             onClick={toggleTheme}
             style={{ ...styles.themeToggle, backgroundColor: colors.toggleBg, color: colors.toggleText }}
@@ -142,6 +142,7 @@ export default function Home() {
               auth-token={token}
               header={header}
               color-scheme={theme}
+              modules="roadmap"
               style={{ width: "100%", minHeight: "800px" }}
             ></released-page>
             <released-form form-id="b67de5f5-2ece-46ba-aa84-602ab58f40ea" auth-token={token}></released-form>
@@ -329,6 +330,7 @@ declare global {
           "auth-token"?: string;
           "header"?: string;
           "color-scheme"?: string;
+          "modules"?: string;
         },
         HTMLElement
       >;
