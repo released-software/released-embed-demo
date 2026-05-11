@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 // Mock user data - in a real app, get this from your auth session
 const currentUser = {
   id: "user_12345",
-  email: "john.doe@example.com",
+  email: "john.doe@doesnotexist.released.site",
   name: "John Doe",
   avatar: "https://ui-avatars.com/api/?name=John+Doe",
 };
