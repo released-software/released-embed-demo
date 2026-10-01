@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Button from "./components/Button";
 
 // Mock user - in a real app, get this from your auth context
 const currentUser = {
@@ -15,6 +16,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [header] = useState<"false" | "true">("false");
+  const [feedbackLoading, setFeedbackLoading] = useState(false);
 
   useEffect(() => {
     async function fetchToken() {
@@ -45,8 +47,28 @@ export default function Home() {
     setTheme(theme === "dark" ? "light" : "dark");
   };
 
-  const openFeedback = () => {
-    window.Released?.show('form', 'b67de5f5-2ece-46ba-aa84-602ab58f40ea');
+  const openFeedback = async () => {
+    const show = () => window.Released?.show('form', 'b67de5f5-2ece-46ba-aa84-602ab58f40ea');
+
+    // window.Released only exists once the embed script has loaded, so wait for it
+    // instead of silently doing nothing if the button is clicked too early.
+    if (customElements.get("released-form")) {
+      show();
+      return;
+    }
+
+    setFeedbackLoading(true);
+    try {
+      await Promise.race([
+        customElements.whenDefined("released-form"),
+        new Promise((_, reject) => setTimeout(() => reject(new Error("Released embed timed out")), 10000)),
+      ]);
+      show();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setFeedbackLoading(false);
+    }
   };
 
   const colors = theme === "dark" ? darkColors : lightColors;
@@ -83,13 +105,14 @@ export default function Home() {
           />
         </a>
         <div className="nav-links" style={styles.navLinks}>          
-          <button
+          <Button
             onClick={openFeedback}
+            loading={feedbackLoading}
             className="feedback-button"
             style={{ ...styles.feedbackButton, backgroundColor: colors.buttonBg, color: colors.buttonText }}
           >
             Feedback
-          </button>
+          </Button>
           <a
             href="https://github.com/released-software/released-embed-demo"
             target="_blank"
@@ -237,7 +260,6 @@ const styles: { [key: string]: React.CSSProperties } = {
     fontWeight: "500",
     border: "none",
     cursor: "pointer",
-    transition: "background-color 0.2s, color 0.2s",
   },
   logo: {
     height: "80px",
