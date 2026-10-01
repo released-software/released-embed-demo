@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 // Mock user - in a real app, get this from your auth context
 const currentUser = {
@@ -13,7 +14,7 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [theme, setTheme] = useState<"dark" | "light">("dark");
-  const [header, setHeader] = useState<"false" | "true">("false");
+  const [header] = useState<"false" | "true">("false");
 
   useEffect(() => {
     async function fetchToken() {
@@ -72,9 +73,11 @@ export default function Home() {
     <div style={{ ...styles.container, backgroundColor: colors.bg }}>
       <nav className="nav-container" style={styles.nav}>
         <a href="https://released.so" target="_blank" rel="noopener noreferrer">
-          <img
+          <Image
             src={theme === "dark" ? "/released-logo.svg" : "/released-logo-dark.svg"}
             alt="Released"
+            width={568}
+            height={320}
             className="nav-logo"
             style={styles.logo}
           />
@@ -313,35 +316,3 @@ const styles: { [key: string]: React.CSSProperties } = {
     border: "1px solid rgba(255, 99, 105, 0.2)",
   },
 };
-
-// TypeScript declaration for the custom elements and Released API
-declare global {
-  interface Window {
-    Released?: {
-      show: (type: string, id: string) => void;
-      close: (type: string, id: string) => void;
-    };
-  }
-  namespace JSX {
-    interface IntrinsicElements {
-      "released-page": React.DetailedHTMLProps<
-        React.HTMLAttributes<HTMLElement> & {
-          "channel-id"?: string;
-          "auth-token"?: string;
-          "header"?: string;
-          "color-scheme"?: string;
-          "modules"?: string;
-        },
-        HTMLElement
-      >;
-      "released-form": React.DetailedHTMLProps<
-        React.HTMLAttributes<HTMLElement> & {
-          "form-id"?: string;
-          "auth-token"?: string;
-          "sub-title"?: string;
-        },
-        HTMLElement
-      >;
-    }
-  }
-}
