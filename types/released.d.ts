@@ -6,6 +6,9 @@ declare global {
       close: (type: string, id: string) => void;
     };
   }
+}
+
+declare module "react" {
   namespace JSX {
     interface IntrinsicElements {
       "released-page": React.DetailedHTMLProps<
