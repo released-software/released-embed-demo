@@ -1,12 +1,17 @@
-import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
-import nextTypescript from "eslint-config-next/typescript";
+import js from "@eslint/js";
+import eslintPluginAstro from "eslint-plugin-astro";
+import globals from "globals";
+import tseslint from "typescript-eslint";
 
-const eslintConfig = [
-  ...nextCoreWebVitals,
-  ...nextTypescript,
+export default tseslint.config(
   {
-    ignores: [".next/**", "node_modules/**"],
+    // Generated files and build output.
+    ignores: ["dist/**", "node_modules/**", ".wrangler/**", ".astro/**", "worker-configuration.d.ts"],
   },
-];
-
-export default eslintConfig;
+  js.configs.recommended,
+  ...tseslint.configs.recommended,
+  ...eslintPluginAstro.configs["flat/recommended"],
+  {
+    languageOptions: { globals: { ...globals.browser } },
+  },
+);

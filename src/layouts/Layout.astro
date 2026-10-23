@@ -1,0 +1,35 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+
+    {/* Pages can add their own scripts here; they run before the embed script below. */}
+    <slot name="head" />
+
+    {/*
+      The Released embed script. It defines the <released-page> and
+      <released-form> custom elements and the `window.Released` API.
+      `is:inline` stops Astro from bundling it; it loads straight from Released.
+      It sits in <head> so the elements are defined before the page content.
+    */}
+    <script is:inline src="https://embed.released.so/1/embed.js"></script>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

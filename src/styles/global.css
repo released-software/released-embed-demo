@@ -1,0 +1,208 @@
+/* Page styling. Nothing here is specific to Released. */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Theme colours. `data-theme` on .page switches between the two sets. */
+.page {
+  --bg: #000;
+  --text: #fff;
+  --text-muted: #888;
+  --primary-bg: #fff;
+  --primary-text: #000;
+  --secondary-bg: #333;
+  --secondary-text: #fff;
+
+  min-height: 100vh;
+  background: var(--bg);
+  transition: background-color 0.3s ease;
+}
+
+.page[data-theme="light"] {
+  --bg: #fff;
+  --text: #000;
+  --text-muted: #666;
+  --primary-bg: #000;
+  --primary-text: #fff;
+  --secondary-bg: #e5e5e5;
+  --secondary-text: #000;
+}
+
+/* Navigation */
+.nav {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-logo {
+  height: 80px;
+  width: auto;
+}
+
+/* Show the logo and toggle icon that match the current theme. */
+.page[data-theme="dark"] .logo-for-light,
+.page[data-theme="light"] .logo-for-dark,
+.page[data-theme="dark"] .icon-moon,
+.page[data-theme="light"] .icon-sun {
+  display: none;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.button-primary {
+  background: var(--primary-bg);
+  color: var(--primary-text);
+}
+
+.button-secondary {
+  background: var(--secondary-bg);
+  color: var(--secondary-text);
+}
+
+.theme-toggle {
+  justify-content: center;
+  width: 40px;
+  padding: 0;
+}
+
+/* Hero */
+.hero {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 24px 80px;
+  text-align: center;
+}
+
+.hero-greeting {
+  margin: 0 0 16px;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+
+.hero-title {
+  margin: 0;
+  font-size: clamp(48px, 10vw, 80px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: var(--text);
+}
+
+.hero-subtitle {
+  max-width: 600px;
+  margin: 24px auto 0;
+  font-size: 20px;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.hero-subtitle a {
+  color: var(--text);
+}
+
+/* Where the Released elements live */
+.embed-area {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px 60px;
+}
+
+/* Shown in the embed area while the token loads */
+.spinner {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto;
+  border: 2px solid var(--secondary-bg);
+  border-top-color: var(--text);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Error state */
+.error-message {
+  width: fit-content;
+  margin: 0 auto;
+  padding: 12px 20px;
+  border: 1px solid rgba(255, 99, 105, 0.2);
+  border-radius: 6px;
+  background: rgba(255, 99, 105, 0.1);
+  color: #ff6369;
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .nav {
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .nav-logo {
+    height: 50px;
+  }
+
+  .nav-links {
+    width: 100%;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .button {
+    height: 36px;
+    padding: 0 12px;
+    font-size: 13px;
+  }
+
+  .github-link svg {
+    display: none;
+  }
+
+  .hero {
+    padding: 40px 16px 60px;
+  }
+
+  .hero-subtitle {
+    font-size: 16px;
+  }
+}

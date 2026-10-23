@@ -1,0 +1,50 @@
+---
+import Hero from "../components/Hero.astro";
+import SiteNav from "../components/SiteNav.astro";
+import Layout from "../layouts/Layout.astro";
+
+// This page is static: it's built once and served from Cloudflare's edge, with
+// no code running per visitor. The per-user part (the Verified User token and
+// the <released-*> elements) is added in the browser by
+// src/scripts/released-embed.ts.
+
+/**
+ * ID of the feedback form to embed. Find yours in Released under Forms.
+ * Used by src/scripts/released-embed.ts to render the form and to open it from
+ * the nav's Feedback button.
+ */
+const FEEDBACK_FORM_ID = "b67de5f5-2ece-46ba-aa84-602ab58f40ea";
+---
+
+<Layout title="Released Embed Example" description="Demo of Released embed integration">
+  {/*
+    Start fetching the Verified User token as early as possible. This inline
+    script runs in <head> before the (blocking) Released embed script, so the
+    token request and the embed script download happen at the same time instead
+    of one after the other. src/scripts/released-embed.ts picks up the promise
+    from window.releasedAuth.
+  */}
+  <script is:inline slot="head">
+    window.releasedAuth = fetch("/api/released-token", { method: "POST" }).then(function (response) {
+      if (!response.ok) throw new Error("Token request failed (" + response.status + ")");
+      return response.json();
+    });
+    // Mark a failure as handled for now; released-embed.ts reports it to the user.
+    window.releasedAuth.catch(function () {});
+  </script>
+
+  <div class="page" data-theme="dark">
+    <SiteNav />
+    <Hero />
+
+    {/* The Released elements are inserted here once the token has loaded. */}
+    <main id="embed-area" class="embed-area" data-form-id={FEEDBACK_FORM_ID}>
+      <div class="spinner" role="status" aria-label="Loading"></div>
+    </main>
+  </div>
+</Layout>
+
+<script>
+  import "../scripts/released-embed";
+  import "../scripts/theme";
+</script>
