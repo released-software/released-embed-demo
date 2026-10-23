@@ -7,18 +7,16 @@
   "compatibility_date": "2026-10-01",
   "compatibility_flags": ["nodejs_compat"],
 
-  // Public (non-secret) Released settings. Replace with the values from your
-  // Released settings. These are readable in the Cloudflare dashboard.
-  "vars": {
-    "RELEASED_ACCOUNT_ID": "YOUR_ACCOUNT_ID",
-    "RELEASED_CHANNEL_ID": "YOUR_CHANNEL_ID"
-  },
-
-  // The shared secret is deliberately NOT a var. Listing it here gives it a
-  // type and warns in local dev if it's missing; the value itself is stored as
-  // a secret:  npx wrangler secret put RELEASED_SHARED_SECRET
-  // For local development put it in `.dev.vars` (see `.dev.vars.example`).
-  "secrets": { "required": ["RELEASED_SHARED_SECRET"] }
+  // The Released credentials are all stored as Worker secrets, so none of them
+  // are committed to this repo. Listing them here gives them types and warns in
+  // local dev if one is missing; the values themselves are set with:
+  //   npx wrangler secret put RELEASED_SHARED_SECRET
+  //   npx wrangler secret put RELEASED_ACCOUNT_ID
+  //   npx wrangler secret put RELEASED_CHANNEL_ID
+  // For local development put them in `.dev.vars` (see `.dev.vars.example`).
+  "secrets": {
+    "required": ["RELEASED_SHARED_SECRET", "RELEASED_ACCOUNT_ID", "RELEASED_CHANNEL_ID"]
+  }
 
   // To serve the Worker from your own domain, add a route, e.g.:
   // "routes": [{ "pattern": "embed-demo.example.com", "custom_domain": true }]

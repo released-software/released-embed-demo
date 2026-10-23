@@ -1,7 +1,6 @@
 # Local development settings, read by `npm run dev` / `npm run preview`.
 # Copy to `.dev.vars` (git-ignored) and fill in your Released credentials.
-# In production, RELEASED_SHARED_SECRET is a Worker secret and the other two
-# are `vars` in wrangler.jsonc.
+# In production these are Worker secrets: `npx wrangler secret put <NAME>`.
 RELEASED_SHARED_SECRET=YOUR_SHARED_SECRET
 RELEASED_ACCOUNT_ID=YOUR_ACCOUNT_ID
 RELEASED_CHANNEL_ID=YOUR_CHANNEL_ID

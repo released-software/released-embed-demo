@@ -59,23 +59,28 @@ Open [http://localhost:4321](http://localhost:4321). `npm run dev` runs the serv
 
 ### Configuration
 
-| Name | Kind | Where it is set | Description |
-|------|------|-----------------|-------------|
-| `RELEASED_SHARED_SECRET` | secret | `.dev.vars` locally; `wrangler secret put` in production | Your Released shared secret. Keep it private. |
-| `RELEASED_ACCOUNT_ID` | var | `wrangler.jsonc` | Your Released account ID. |
-| `RELEASED_CHANNEL_ID` | var | `wrangler.jsonc` | The channel whose roadmap to display. |
+All three are Worker secrets, so none of them are committed to the repo.
+
+| Name | Description |
+|------|-------------|
+| `RELEASED_SHARED_SECRET` | Your Released shared secret. Never leaves the server. |
+| `RELEASED_ACCOUNT_ID` | Your Released account ID. Never leaves the server. |
+| `RELEASED_CHANNEL_ID` | The channel whose roadmap to display. Not confidential: it is sent to the browser as an attribute on `<released-page>`. Kept out of the repo only for tidiness. |
+
+Locally they come from `.dev.vars` (git-ignored); in production, from `wrangler secret put`.
 
 The form ID is a constant at the top of `src/pages/index.astro`.
 
 ## Deploy to Cloudflare
 
-1. Put your account and channel IDs in the `vars` section of `wrangler.jsonc`.
-2. Log in and store the secret:
+1. Log in and store the three secrets (you'll be prompted for each value):
    ```bash
    npx wrangler login
    npx wrangler secret put RELEASED_SHARED_SECRET
+   npx wrangler secret put RELEASED_ACCOUNT_ID
+   npx wrangler secret put RELEASED_CHANNEL_ID
    ```
-3. Deploy:
+2. Deploy:
    ```bash
    npm run deploy
    ```
