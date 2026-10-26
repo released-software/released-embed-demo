@@ -60,35 +60,32 @@ Open [http://localhost:4321](http://localhost:4321). `npm run dev` runs the serv
 
 ### Configuration
 
-All three are Worker secrets, so none of them are committed to the repo.
+| Name | Kind | Description |
+|------|------|-------------|
+| `RELEASED_SHARED_SECRET` | secret | Your Released shared secret. Never leaves the server. Set locally in `.dev.vars` (git-ignored) and in production with `wrangler secret put`. |
+| `RELEASED_ACCOUNT_ID` | var | Your Released account ID. Set in `wrangler.jsonc`. |
+| `RELEASED_CHANNEL_ID` | var | The channel whose roadmap to display. Set in `wrangler.jsonc`. |
 
-| Name | Description |
-|------|-------------|
-| `RELEASED_SHARED_SECRET` | Your Released shared secret. Never leaves the server. |
-| `RELEASED_ACCOUNT_ID` | Your Released account ID. Never leaves the server. |
-| `RELEASED_CHANNEL_ID` | The channel whose roadmap to display. Not confidential: it is sent to the browser as an attribute on `<released-page>`. Kept out of the repo only for tidiness. |
-
-Locally they come from `.dev.vars` (git-ignored); in production, from `wrangler secret put`.
+`wrangler.jsonc` contains the IDs this demo uses; replace them with your own.
 
 The form ID is a constant at the top of `src/pages/index.astro`.
 
 ## Deploy to Cloudflare
 
-1. Log in and store the three secrets (you'll be prompted for each value):
+1. Put your account and channel IDs in the `vars` section of `wrangler.jsonc`.
+2. Log in and store the shared secret (you'll be prompted for the value):
    ```bash
    npx wrangler login
    npx wrangler secret put RELEASED_SHARED_SECRET
-   npx wrangler secret put RELEASED_ACCOUNT_ID
-   npx wrangler secret put RELEASED_CHANNEL_ID
    ```
-2. Deploy:
+3. Deploy:
    ```bash
    npm run deploy
    ```
 
 Wrangler prints a `*.workers.dev` URL. To use your own domain, add a `routes` entry to `wrangler.jsonc` (an example is in the file) or attach one in the Cloudflare dashboard.
 
-You can also connect the repository under **Workers & Pages** in the dashboard so every push to `main` deploys. Use `npm run build` as the build command and `npx wrangler deploy` as the deploy command.
+You can also connect the repository under **Workers & Pages** in the dashboard so every push to `main` deploys. Use `npm run build` as the build command, `npx wrangler deploy` as the deploy command, and `npx wrangler preview` for non-production branches. Previews don't use the production secret: set `RELEASED_SHARED_SECRET` for them with `npx wrangler preview base-config secret put RELEASED_SHARED_SECRET`, and add the preview domain to Released's trusted domains.
 
 ### Domain whitelist
 

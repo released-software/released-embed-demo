@@ -7,15 +7,19 @@
   "compatibility_date": "2026-10-01",
   "compatibility_flags": ["nodejs_compat"],
 
-  // The Released credentials are all stored as Worker secrets, so none of them
-  // are committed to this repo. Listing them here gives them types and warns in
-  // local dev if one is missing; the values themselves are set with:
+  // Which Released account and channel (roadmap) the demo uses. Not secret;
+  // replace them with your own from your Released settings.
+  "vars": {
+    "RELEASED_ACCOUNT_ID": "1d6bf808-8337-4955-b813-7275a21cf118",
+    "RELEASED_CHANNEL_ID": "a2599969-33e6-4b9e-99ed-c7f80f4a0f68"
+  },
+
+  // The shared secret is NOT a var, so it's never committed. Listing it here
+  // gives it a type and warns in local dev if it's missing; set the value with:
   //   npx wrangler secret put RELEASED_SHARED_SECRET
-  //   npx wrangler secret put RELEASED_ACCOUNT_ID
-  //   npx wrangler secret put RELEASED_CHANNEL_ID
-  // For local development put them in `.dev.vars` (see `.dev.vars.example`).
+  // For local development put it in `.dev.vars` (see `.dev.vars.example`).
   "secrets": {
-    "required": ["RELEASED_SHARED_SECRET", "RELEASED_ACCOUNT_ID", "RELEASED_CHANNEL_ID"]
+    "required": ["RELEASED_SHARED_SECRET"]
   }
 
   // To serve the Worker from your own domain, add a route, e.g.:
