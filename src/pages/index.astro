@@ -1,0 +1,85 @@
+---
+import Hero from "../components/Hero.astro";
+import SiteNav from "../components/SiteNav.astro";
+import Layout from "../layouts/Layout.astro";
+
+/** ID of the feedback form to embed. Find yours in Released under Forms. */
+const FEEDBACK_FORM_ID = "b67de5f5-2ece-46ba-aa84-602ab58f40ea";
+---
+
+<Layout title="Released Embed Example" description="Demo of Released embed integration">
+  <Fragment slot="head">
+    {/*
+      1. Start fetching the Verified User token right away. This runs before the
+         embed script below, so the two downloads overlap instead of waiting on
+         each other. src/scripts/released-embed.ts waits for the result.
+    */}
+    <script is:inline>
+      window.releasedAuth = fetch("/api/released-token", { method: "POST" }).then(function (response) {
+        if (!response.ok) throw new Error("Token request failed (" + response.status + ")");
+        return response.json();
+      });
+      // Mark a failure as handled for now; released-embed.ts shows it to the user.
+      window.releasedAuth.catch(function () {});
+    </script>
+
+    {/*
+      2. The Released embed script. It defines the <released-page> and
+         <released-form> elements and the window.Released API. `is:inline`
+         stops Astro from bundling it, so it loads straight from Released.
+    */}
+    <script is:inline src="https://embed.released.so/1/embed.js"></script>
+  </Fragment>
+
+  <div class="page" data-theme="dark">
+    <SiteNav />
+    <Hero />
+
+    {/* The Released elements are inserted here once the token has loaded. */}
+    <main id="embed-area" class="embed-area">
+      <div class="spinner" role="status" aria-label="Loading"></div>
+    </main>
+
+    {/*
+      3. THE EMBED. This is the markup you add to your own pages.
+
+      It's wrapped in a <template> because it needs the visitor's token, which
+      this static page doesn't have yet. src/scripts/released-embed.ts fills in
+      the empty attributes and inserts it. If your pages are rendered per
+      request, skip the template and write the values straight into the tags.
+
+      <released-page> shows your roadmap.
+        channel-id    which Released channel to show (filled in by script)
+        auth-token    the Verified User token (filled in by script)
+        color-scheme  "light" | "dark"
+        header        "true" | "false"; whether to show Released's own header
+        modules       which sections to show, e.g. "roadmap"
+
+      <released-form> shows a feedback form. The Feedback button in the nav also
+      opens it as a dialog with window.Released.show("form", formId).
+        form-id       which form to show
+        auth-token    the Verified User token (filled in by script)
+        sub-title     heading text
+    */}
+    <template id="released-embed">
+      <released-page
+        channel-id=""
+        auth-token=""
+        color-scheme="dark"
+        header="false"
+        modules="roadmap"
+        style="width: 100%; min-height: 800px"></released-page>
+
+      <released-form
+        form-id={FEEDBACK_FORM_ID}
+        auth-token=""
+        sub-title="Embed this form in your website or app to collect feedback from customers or stakeholders."
+      ></released-form>
+    </template>
+  </div>
+</Layout>
+
+<script>
+  import "../scripts/released-embed";
+  import "../scripts/theme";
+</script>

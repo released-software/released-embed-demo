@@ -1,175 +1,147 @@
 # Released Embed Demo
 
-A Next.js app demonstrating how to embed a [Released](https://released.so) portal with server-side user authentication. This allows your users to access the roadmap without needing to log in separately.
+An [Astro](https://astro.build) app, deployed on [Cloudflare Workers](https://developers.cloudflare.com/workers/), that shows how to embed a [Released](https://released.so) portal with server-side user authentication. Your users get the roadmap and feedback form without logging in separately.
 
 **Live Demo:** [https://embed-demo.released.so](https://embed-demo.released.so)
 
-## Features
+## Where to look
 
-- **Server-side token generation** - Your shared secret stays secure on the server
-- **User impersonation** - Authenticate users with their existing session
-- **Dark mode support** - Matches the embed to your app's theme
-- **Vercel-ready** - One-click deploy to Vercel
+The parts you'll copy into your own app are small and commented:
 
-## Getting Started
+| File | What it shows |
+|------|---------------|
+| [`src/lib/released-auth.ts`](src/lib/released-auth.ts) | **Verified User tokens.** Exchanges your shared secret for a token identifying the signed-in user. |
+| [`src/lib/current-user.ts`](src/lib/current-user.ts) | Your app's signed-in user. A stub: replace `getCurrentUser()` with your own user source. |
+| [`src/pages/api/released-token.ts`](src/pages/api/released-token.ts) | The endpoint (`POST /api/released-token`) that returns the token to the browser. |
+| [`src/pages/index.astro`](src/pages/index.astro) | **The `<released-*>` custom elements.** In order: the script that starts the token request, the Released embed script (`embed.js`), and the `<released-page>` / `<released-form>` markup in a `<template>`, with every attribute documented. This is the snippet to copy. |
+| [`src/scripts/released-embed.ts`](src/scripts/released-embed.ts) | Waits for the token, fills it into that markup, inserts it, and opens the form with `window.Released.show(...)`. |
+| [`src/types/released.d.ts`](src/types/released.d.ts) | TypeScript type for `window.Released`. |
+
+Everything else (`src/layouts`, `src/components`, `src/scripts/theme.ts`, `src/styles/global.css`) is page chrome. There is no UI framework.
+
+## How it works
+
+The page is static, so it can be cached and served from Cloudflare's edge. Only the token request runs per visitor:
+
+```
+Browser ── 1. GET / ─────────────────────▶ Cloudflare edge (static HTML + JS, cached)
+   │
+   ├─ 2. POST /api/released-token ───────▶ Worker (Astro endpoint, never cached)
+   │                                         │ 3. POST shared secret + user ──▶ Released API
+   │      ◀── 5. { token, channelId } ───────┘ 4. ◀── Verified User token
+   │
+   └─ 6. inserts <released-page auth-token=…> which talks to Released as that user
+```
+
+The shared secret never leaves the Worker. The browser only ever receives the short-lived token.
+
+The token request is started by a small inline script in `<head>`, just before the blocking Released embed script (both in `src/pages/index.astro`). That way fetching the token and downloading `embed.js` overlap instead of running one after the other, and `released-embed.ts` just waits for the result. If your site has a Content Security Policy that blocks inline scripts, give this script a nonce or move it into a same-origin `.js` file; otherwise the embed shows "Couldn't load the roadmap" and logs why.
+
+Because the token is fetched after the page loads, the roadmap appears once that request finishes (a spinner shows meanwhile), and the page needs JavaScript. If you would rather have the token in the first response, render it in `index.astro` instead and drop the template (add `export const prerender = false`, call `getReleasedEmbedAuth()` in the frontmatter, and set `Cache-Control: private, no-store`). The trade-off is that the page can then no longer be cached.
+
+## Getting started
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 22+
 - A Released account with embed access
-- Your Released credentials (shared secret, account ID, channel ID)
+- Your Released credentials: shared secret, account ID and channel ID
+- A [Cloudflare account](https://dash.cloudflare.com/sign-up) (only to deploy)
 
-### Local Development
+### Local development
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/released-software/released-embed-demo.git
-   cd released-embed-demo
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Copy `.env.example` to `.env.local` and fill in your Released credentials:
-   ```bash
-   cp .env.example .env.local
-   ```
-
-4. Run the development server:
-   ```bash
-   npm run dev
-   ```
-
-5. Open [http://localhost:3000](http://localhost:3000)
-
-## Deploy to Vercel
-
-### Option 1: One-Click Deploy
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Freleased-software%2Freleased-embed-demo&env=RELEASED_SHARED_SECRET,RELEASED_ACCOUNT_ID,NEXT_PUBLIC_RELEASED_CHANNEL_ID&envDescription=Released%20API%20credentials%20from%20your%20Released%20dashboard&project-name=released-embed-demo)
-
-### Option 2: Manual Deploy
-
-1. Push this code to your Git repository
-
-2. Import the project in [Vercel](https://vercel.com/new)
-
-3. Add the following environment variables in Vercel's project settings:
-   | Variable | Description |
-   |----------|-------------|
-   | `RELEASED_SHARED_SECRET` | Your Released shared secret (keep this private!) |
-   | `RELEASED_ACCOUNT_ID` | Your Released account ID |
-   | `NEXT_PUBLIC_RELEASED_CHANNEL_ID` | The channel ID for the roadmap to display |
-
-4. Deploy!
-
-### Domain Whitelist
-
-After deploying, add your Vercel domain to the allowed origins in your Released embed settings to prevent `invalid_origin` errors. See the [Trusted Domains documentation](https://docs.released.so/guide/product/administration/trusted-domains) for detailed instructions.
-
-## Project Structure
-
-```
-├── app/
-│   ├── api/
-│   │   └── released-token/
-│   │       └── route.ts    # API route for secure token generation
-│   ├── layout.tsx          # Root layout with Released script
-│   └── page.tsx            # Main page with Released embed
-├── public/
-│   └── released-logo.svg   # Released logo
-├── .env.example            # Environment variables template
-└── .env.local              # Local environment variables (git-ignored)
+```bash
+npm install
+cp .dev.vars.example .dev.vars   # then fill in your Released credentials
+npm run dev
 ```
 
-## How It Works
+Open [http://localhost:4321](http://localhost:4321). `npm run dev` runs the server code in the real Workers runtime (workerd), so it behaves like production. `.dev.vars` is git-ignored.
 
-```
-┌─────────────┐     1. Request page      ┌─────────────┐
-│             │ ──────────────────────▶  │             │
-│   Browser   │                          │  Next.js    │
-│             │ ◀──────────────────────  │  Server     │
-└─────────────┘     2. Return HTML       └─────────────┘
-       │                                        │
-       │ 3. Fetch token                         │
-       │    (POST /api/released-token)          │
-       ▼                                        ▼
-┌─────────────┐                          ┌─────────────┐
-│  Released   │ ◀────────────────────── │  Released   │
-│   Embed     │     4. Generate token    │    API      │
-│             │        (server-side)     │             │
-└─────────────┘                          └─────────────┘
-```
+### Configuration
 
-1. User visits the page
-2. The page component calls `/api/released-token`
-3. The API route securely generates a token using your `RELEASED_SHARED_SECRET` (never exposed to the client)
-4. The token is passed to the `<released-page>` web component
-5. The embed authenticates the user automatically
+All three are Worker secrets, so none of them are committed to the repo.
+
+| Name | Description |
+|------|-------------|
+| `RELEASED_SHARED_SECRET` | Your Released shared secret. Never leaves the server. |
+| `RELEASED_ACCOUNT_ID` | Your Released account ID. Never leaves the server. |
+| `RELEASED_CHANNEL_ID` | The channel whose roadmap to display. Not confidential: it is sent to the browser as an attribute on `<released-page>`. Kept out of the repo only for tidiness. |
+
+Locally they come from `.dev.vars` (git-ignored); in production, from `wrangler secret put`.
+
+The form ID is a constant at the top of `src/pages/index.astro`.
+
+## Deploy to Cloudflare
+
+1. Log in and store the three secrets (you'll be prompted for each value):
+   ```bash
+   npx wrangler login
+   npx wrangler secret put RELEASED_SHARED_SECRET
+   npx wrangler secret put RELEASED_ACCOUNT_ID
+   npx wrangler secret put RELEASED_CHANNEL_ID
+   ```
+2. Deploy:
+   ```bash
+   npm run deploy
+   ```
+
+Wrangler prints a `*.workers.dev` URL. To use your own domain, add a `routes` entry to `wrangler.jsonc` (an example is in the file) or attach one in the Cloudflare dashboard.
+
+You can also connect the repository under **Workers & Pages** in the dashboard so every push to `main` deploys. Use `npm run build` as the build command and `npx wrangler deploy` as the deploy command.
+
+### Domain whitelist
+
+After deploying, add your domain to the allowed origins in your Released embed settings to prevent `invalid_origin` errors. See the [Trusted Domains documentation](https://docs.released.so/guide/product/administration/trusted-domains).
+
+## Scripts
+
+| Command | Does |
+|---------|------|
+| `npm run dev` | Dev server with hot reload |
+| `npm run build` | Production build into `dist/` |
+| `npm run preview` | Serve the production build locally |
+| `npm run deploy` | Build, then deploy with Wrangler |
+| `npm run lint` | ESLint |
+| `npm run typecheck` | Generates Worker types (`wrangler types`), then runs `astro check` |
 
 ## Customization
 
-### Dark Mode
+### Dark mode
 
-The embed supports dark mode via the `color-scheme` attribute:
+`<released-page>` follows the `color-scheme` attribute (`"light"` or `"dark"`), and you can change it at any time:
+
+```ts
+document.querySelector("released-page")?.setAttribute("color-scheme", "light");
+```
+
+### Feedback form
+
+Render a `<released-form>` and open it from anywhere with the Released API:
 
 ```html
-<released-page
-  channel-id="your-channel-id"
-  auth-token="token"
-  color-scheme="dark"
-></released-page>
+<released-form form-id="YOUR_FORM_ID" auth-token={token}></released-form>
+
+<button id="feedback">Feedback</button>
+<script>
+  document.querySelector("#feedback")?.addEventListener("click", () => {
+    window.Released?.show("form", "YOUR_FORM_ID");
+  });
+</script>
 ```
 
-### Feedback Form
+`window.Released.close("form", "YOUR_FORM_ID")` closes it.
 
-You can embed a feedback form that users can trigger programmatically:
+### User information
 
-1. Add the form element to your page:
+Replace `getCurrentUser()` in `src/lib/current-user.ts` with your own user source (for example, give it the `request` from `src/pages/api/released-token.ts` and read your session), and return `null` for signed-out visitors:
 
-```html
-<released-form
-  form-id="your-form-id"
-  auth-token="token"
-></released-form>
-```
-
-2. Open the form programmatically using the Released API:
-
-```javascript
-// Open the feedback form
-window.Released.show('form', 'your-form-id');
-
-// Close the feedback form
-window.Released.close('form', 'your-form-id');
-```
-
-Example with a button:
-
-```jsx
-const openFeedback = () => {
-  window.Released?.show('form', 'your-form-id');
-};
-
-<button onClick={openFeedback}>
-  Feedback
-</button>
-```
-
-### User Information
-
-Modify `app/api/released-token/route.ts` to pull user information from your actual authentication system:
-
-```typescript
-// Replace this with your actual user session
-const currentUser = {
-  id: session.user.id,
-  email: session.user.email,
-  name: session.user.name,
-  avatar: session.user.image,
-};
+```ts
+export function getCurrentUser(request: Request): CurrentUser | null {
+  const session = /* read your session cookie from request.headers.get("cookie") */;
+  if (!session) return null;
+  return { id: session.userId, email: session.email, name: session.name, avatarUrl: session.image };
+}
 ```
 
 ## License
@@ -180,4 +152,5 @@ Apache-2.0
 
 - [Released](https://released.so) - Product changelog and roadmap platform
 - [Released Documentation](https://docs.released.so) - Full documentation
-- [Vercel](https://vercel.com) - Deployment platform
+- [Astro](https://astro.build) - Framework
+- [Cloudflare Workers](https://developers.cloudflare.com/workers/) - Deployment platform
