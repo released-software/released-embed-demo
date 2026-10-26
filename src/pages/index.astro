@@ -10,9 +10,9 @@ const FEEDBACK_FORM_ID = "b67de5f5-2ece-46ba-aa84-602ab58f40ea";
 <Layout title="Released Embed Example" description="Demo of Released embed integration">
   <Fragment slot="head">
     {/*
-      1. Start fetching the Verified User token right away. This runs before the
-         embed script below, so the two downloads overlap instead of waiting on
-         each other. src/scripts/released-embed.ts waits for the result.
+      1. Start fetching the Verified User token right away, so it downloads
+         alongside the embed script and the page instead of after them.
+         src/scripts/released-embed.ts waits for the result.
     */}
     <script is:inline>
       window.releasedAuth = fetch("/api/released-token", { method: "POST" }).then(function (response) {
@@ -25,10 +25,14 @@ const FEEDBACK_FORM_ID = "b67de5f5-2ece-46ba-aa84-602ab58f40ea";
 
     {/*
       2. The Released embed script. It defines the <released-page> and
-         <released-form> elements and the window.Released API. `is:inline`
-         stops Astro from bundling it, so it loads straight from Released.
+         <released-form> elements and the window.Released API. `defer` is
+         required: the script adds to document.body, which doesn't exist yet
+         while <head> is being parsed. Deferred scripts run in order once the
+         page is parsed, so it's ready before released-embed.ts runs.
+         `is:inline` stops Astro from bundling it, so it loads straight from
+         Released.
     */}
-    <script is:inline src="https://embed.released.so/1/embed.js"></script>
+    <script is:inline defer src="https://embed.released.so/1/embed.js"></script>
   </Fragment>
 
   <div class="page" data-theme="dark">

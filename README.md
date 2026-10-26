@@ -35,7 +35,7 @@ Browser ── 1. GET / ──────────────────�
 
 The shared secret never leaves the Worker. The browser only ever receives the short-lived token.
 
-The token request is started by a small inline script in `<head>`, just before the blocking Released embed script (both in `src/pages/index.astro`). That way fetching the token and downloading `embed.js` overlap instead of running one after the other, and `released-embed.ts` just waits for the result. If your site has a Content Security Policy that blocks inline scripts, give this script a nonce or move it into a same-origin `.js` file; otherwise the embed shows "Couldn't load the roadmap" and logs why.
+The token request is started by a small inline script in `<head>`, next to the Released embed script (both in `src/pages/index.astro`). That way the token loads alongside `embed.js` and the page instead of after them, and `released-embed.ts` just waits for the result. `embed.js` is loaded with `defer`, because it adds to `document.body`, which doesn't exist while `<head>` is being parsed. If your site has a Content Security Policy that blocks inline scripts, give the inline token script a nonce or move it into a same-origin `.js` file; otherwise the embed shows "Couldn't load the roadmap" and logs why.
 
 Because the token is fetched after the page loads, the roadmap appears once that request finishes (a spinner shows meanwhile), and the page needs JavaScript. If you would rather have the token in the first response, render it in `index.astro` instead and drop the template (add `export const prerender = false`, call `getReleasedEmbedAuth()` in the frontmatter, and set `Cache-Control: private, no-store`). The trade-off is that the page can then no longer be cached.
 
