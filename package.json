@@ -18,7 +18,7 @@
     "globals": "^17.13.0",
     "typescript": "^5",
     "typescript-eslint": "^8.71.2",
-    "wrangler": "^4.151.1"
+    "wrangler": "^4.155.0"
   },
   "type": "module",
   "dependencies": {
