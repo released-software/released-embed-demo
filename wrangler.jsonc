@@ -1,0 +1,27 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "released-embed-demo",
+
+  // No `main` here: the Astro Cloudflare adapter supplies the Worker entry and
+  // the static assets binding when you run `astro build`.
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+
+  // Which Released account and channel (roadmap) the demo uses. Not secret;
+  // replace them with your own from your Released settings.
+  "vars": {
+    "RELEASED_ACCOUNT_ID": "1d6bf808-8337-4955-b813-7275a21cf118",
+    "RELEASED_CHANNEL_ID": "a2599969-33e6-4b9e-99ed-c7f80f4a0f68"
+  },
+
+  // The shared secret is NOT a var, so it's never committed. Listing it here
+  // gives it a type and warns in local dev if it's missing; set the value with:
+  //   npx wrangler secret put RELEASED_SHARED_SECRET
+  // For local development put it in `.dev.vars` (see `.dev.vars.example`).
+  "secrets": {
+    "required": ["RELEASED_SHARED_SECRET"]
+  }
+
+  // To serve the Worker from your own domain, add a route, e.g.:
+  // "routes": [{ "pattern": "embed-demo.example.com", "custom_domain": true }]
+}

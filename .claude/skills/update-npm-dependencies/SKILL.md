@@ -5,15 +5,18 @@ description: Update this repo's npm dependencies (a version bump or a security f
 
 # Update npm dependencies
 
-A single-directory Next.js app (App Router), one `package.json`, one
-`package-lock.json`. npm only.
+A single-directory Astro app deployed to Cloudflare Workers, one
+`package.json`, one `package-lock.json`. npm only.
 
 ## Making the change
 
 1. Edit the version range in `package.json`, keeping the existing range
-   operator (`^1.2.0` → `^1.4.0`). Move `react` and `react-dom` together, and
-   their `@types/react` / `@types/react-dom` with them. Move `next` with any
-   `@next/*` or `eslint-config-next` package.
+   operator (`^1.2.0` → `^1.4.0`). Move `astro` with `@astrojs/*`
+   packages (`@astrojs/cloudflare`, `@astrojs/check`) together; the adapter
+   declares which `astro` and `wrangler` versions it supports. Move
+   `eslint` with `@eslint/js`, and check `eslint-plugin-astro` still supports
+   it. After bumping `wrangler`, move the `compatibility_date` in
+   `wrangler.jsonc` only if the release notes ask for it.
 2. Regenerate the lockfile: `npm install`. Commit `package-lock.json` along
    with `package.json`; never hand-edit the lockfile.
 3. For a security fix to a transitive dependency, prefer raising the direct
@@ -29,16 +32,16 @@ same steps CI runs (`.github/workflows/ci.yml`):
 1. Install: `npm ci`, which must succeed against the committed lockfile.
 2. Lint: `npm run lint`.
 3. Typecheck: `npm run typecheck`.
-4. Build: `npm run build`. It needs no environment variables. The
-   `RELEASED_*` values in `.env.example` are read only at request time.
+4. Build: `npm run build`. It needs no secrets. The `RELEASED_*` values in
+   `.dev.vars.example` are read only at request time (a missing-secret warning
+   during build is expected).
 
 There are no tests.
 
 ## Install scripts
 
 `.npmrc` sets `ignore-scripts=true`, so no dependency's install scripts run
-(today the only one is `unrs-resolver`'s `postinstall`, via
-`eslint-config-next`). Install, lint, typecheck and build all pass without
+(check `npm ls` output if unsure). Install, lint, typecheck and build all pass without
 them. Do not remove that setting, add an `allowScripts` allowlist, or pass
 `--ignore-scripts=false`. If a new or upgraded package needs its install
 script to work, stop and report it instead.

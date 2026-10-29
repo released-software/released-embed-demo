@@ -1,0 +1,18 @@
+---
+// Intro text above the embed. Page chrome, not part of the embed.
+import { getCurrentUser } from "../lib/current-user";
+
+// This page is static, so the name is filled in when the site is built. In
+// your app, greet the user however you normally do.
+const user = getCurrentUser();
+---
+
+<header class="hero">
+  {user && <p class="hero-greeting">Welcome back, {user.name}</p>}
+  <h1 class="hero-title">Embed Demo</h1>
+  <p class="hero-subtitle">
+    This demo shows how <a href="https://released.so">Released</a> connects customer communication with Jira.
+    The roadmap displays Jira issues in a shareable format, and the feedback button captures feedback directly
+    into Jira.
+  </p>
+</header>
