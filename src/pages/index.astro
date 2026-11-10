@@ -31,8 +31,11 @@ const FEEDBACK_FORM_ID = "b67de5f5-2ece-46ba-aa84-602ab58f40ea";
          page is parsed, so it's ready before released-embed.ts runs.
          `is:inline` stops Astro from bundling it, so it loads straight from
          Released.
+         `data-preload` starts downloading the code for both elements as soon
+         as the script runs. The elements are only added once the token
+         arrives, so without it their code would start downloading after that.
     */}
-    <script is:inline defer src="https://embed.released.so/1/embed.js"></script>
+    <script is:inline defer src="https://embed.released.so/1/embed.js" data-preload="page form"></script>
   </Fragment>
 
   <div class="page" data-theme="dark">
