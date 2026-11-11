@@ -20,6 +20,20 @@
   // For local development put it in `.dev.vars` (see `.dev.vars.example`).
   "secrets": {
     "required": ["RELEASED_SHARED_SECRET"]
+  },
+
+  // Settings for preview deployments (`npx wrangler preview`). Previews don't
+  // inherit `vars` or `secrets` from above, so repeat them here. Previews also
+  // have their own secret values; set the shared secret for them with:
+  //   npx wrangler preview base-config secret put RELEASED_SHARED_SECRET
+  "previews": {
+    "vars": {
+      "RELEASED_ACCOUNT_ID": "1d6bf808-8337-4955-b813-7275a21cf118",
+      "RELEASED_CHANNEL_ID": "a2599969-33e6-4b9e-99ed-c7f80f4a0f68"
+    },
+    "secrets": {
+      "required": ["RELEASED_SHARED_SECRET"]
+    }
   }
 
   // To serve the Worker from your own domain, add a route, e.g.:

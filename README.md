@@ -72,7 +72,7 @@ The form ID is a constant at the top of `src/pages/index.astro`.
 
 ## Deploy to Cloudflare
 
-1. Put your account and channel IDs in the `vars` section of `wrangler.jsonc`.
+1. Put your account and channel IDs in the `vars` section of `wrangler.jsonc`, and in `previews.vars` if you use preview deployments.
 2. Log in and store the shared secret (you'll be prompted for the value):
    ```bash
    npx wrangler login
@@ -85,7 +85,7 @@ The form ID is a constant at the top of `src/pages/index.astro`.
 
 Wrangler prints a `*.workers.dev` URL. To use your own domain, add a `routes` entry to `wrangler.jsonc` (an example is in the file) or attach one in the Cloudflare dashboard.
 
-You can also connect the repository under **Workers & Pages** in the dashboard so every push to `main` deploys. Use `npm run build` as the build command, `npx wrangler deploy` as the deploy command, and `npx wrangler preview` for non-production branches. Previews don't use the production secret: set `RELEASED_SHARED_SECRET` for them with `npx wrangler preview base-config secret put RELEASED_SHARED_SECRET`, and add the preview domain to Released's trusted domains.
+You can also connect the repository under **Workers & Pages** in the dashboard so every push to `main` deploys. Use `npm run build` as the build command, `npx wrangler deploy` as the deploy command, and `npx wrangler preview` for non-production branches. Previews don't inherit the top-level vars or the production secret: their vars are under `previews` in `wrangler.jsonc`, and you set `RELEASED_SHARED_SECRET` for them with `npx wrangler preview base-config secret put RELEASED_SHARED_SECRET`. Also add the preview domain to Released's trusted domains.
 
 ### Domain whitelist
 
