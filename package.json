@@ -23,6 +23,6 @@
   "type": "module",
   "dependencies": {
     "@astrojs/cloudflare": "^14.4.7",
-    "astro": "^7.4.0"
+    "astro": "^7.4.12"
   }
 }
