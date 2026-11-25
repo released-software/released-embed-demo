@@ -22,7 +22,7 @@
   },
   "type": "module",
   "dependencies": {
-    "@astrojs/cloudflare": "^14.4.7",
+    "@astrojs/cloudflare": "^14.4.8",
     "astro": "^7.4.12"
   }
 }
